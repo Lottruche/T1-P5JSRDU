@@ -1,114 +1,70 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Sketch</title>
-
-    <link rel="stylesheet" type="text/css" href="style.css">
-
-    <script src="libraries/p5.min.js"></script>
-    <script src="libraries/p5.sound.min.js"></script>
-  </head>
-
-  <body>
-    <script src="sketch.js"></script>
-  </body>
-</html>-->
 <!DOCTYPE html>
 <html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <title>P5JS - Traînée contrôlée par slider</title>
-    <style>
-      body {
-        margin: 0;
-        background: rgb(57, 57, 57);
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
 
-      .container {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <title>P5JS - Traînée + Synth + Recorder</title>
+  <style>
+    body {
+      margin: 0;
+      background: rgb(57, 57, 57);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+    }
 
-      /* Slider vertical inversé */
-      input[type="range"] {
-        writing-mode: bt-lr;
-        -webkit-appearance: slider-vertical;
-        width: 25px;
-        height: 300px;
-        accent-color: #34a0cf;
-        cursor: grab;
-        transform: rotate(180deg);
-      }
-    </style>
-    <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
-  </head>
+    .container {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
 
-  <body>
-    <div class="container">
-      <input id="ySlider" type="range" min="0" max="300" value="150" step="30" orient="vertical" />
-      <div id="Canvas"></div>
-    </div>
+    input[type="range"] {
+      writing-mode: bt-lr;
+      -webkit-appearance: slider-vertical;
+      height: 300px;
+      width: 25px;
+      accent-color: #34a0cf;
+      cursor: grab;
+      transform: rotate(180deg);
+    }
 
-    <script>
-      let particles = [];
-      let centerY;
-      let speed = 4;
-      let isGrabbed = false;
-      let slider;
+    .controls {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
 
-      function setup() {
-        let cnv = createCanvas(900, 300);
-        cnv.parent("Canvas");
-        noStroke();
-        centerY = height / 2;
-        slider = select("#ySlider");
+    .info {
+      color: #bdc3c7;
+      font-size: 12px;
+      margin-top: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
 
-        // Événements pour le slider
-        slider.mousePressed(() => (isGrabbed = true));
-        slider.mouseReleased(() => (isGrabbed = false));
-      }
+<body>
+  <div class="container">
+    <input id="ySlider" type="range" min="0" max="300" value="150" step="30" orient="vertical" />
+    <div id="Canvas"></div>
+  </div>
 
-      function draw() {
-        background(0, 70); // légère transparence
+  <div class="controls" id="controls"></div>
 
-        // Met à jour la position verticale du point
-        centerY = float(slider.value());
+  <div class="info">
+    Déplacez le slider pour créer des sons • Cliquez sur Enregistrer pour capturer l'audio
+  </div>
 
-        // Crée des particules si le slider est grab
-        if (isGrabbed) {
-          for (let i = 0; i < 5; i++) {
-            particles.push({
-              x: width / 2,
-              y: centerY,
-              alpha: 550
-            });
-          }
-        }
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/addons/p5.sound.min.js"></script>
 
-        // Mise à jour et affichage des particules
-        for (let i = particles.length - 1; i >= 0; i--) {
-          let p = particles[i];
-          p.x += speed;
-          p.alpha -= 3;
+  <script src="sketch.js"></script>
+</body>
 
-          fill(36, 122, 163, p.alpha);
-          circle(p.x, p.y, 20);
-
-          if (p.alpha <= 0) particles.splice(i, 1);
-        }
-
-        // Point fixe
-        fill(52, 159, 207);
-        circle(width / 2, centerY, 20);
-      }
-    </script>
-  </body>
 </html>
