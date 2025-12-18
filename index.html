@@ -1,64 +1,24 @@
 <!DOCTYPE html>
 <html lang="fr">
-
+<link rel="stylesheet" href="style.css">
 <head>
   <meta charset="UTF-8" />
-  <title>P5JS - Traînée + Synth + Recorder</title>
-  <style>
-    body {
-      margin: 0;
-      background: rgb(57, 57, 57);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      font-family: Arial, sans-serif;
-    }
-
-    .container {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-
-    input[type="range"] {
-      writing-mode: bt-lr;
-      -webkit-appearance: slider-vertical;
-      height: 300px;
-      width: 25px;
-      accent-color: #34a0cf;
-      cursor: grab;
-      transform: rotate(180deg);
-    }
-
-    .controls {
-      margin-top: 20px;
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .info {
-      color: #bdc3c7;
-      font-size: 12px;
-      margin-top: 10px;
-      text-align: center;
-    }
-  </style>
+  <title>Howling Wolf Link</title>
 </head>
 
 <body>
+
   <div class="container">
-    <input id="ySlider" type="range" min="0" max="300" value="150" step="30" orient="vertical" />
+    <div class="left-panel">
+      <div id="freqButtons"></div>
+      <input id="ySlider" type="range" min="0" max="250" value="125" step="30" orient="vertical" />
+    </div>
     <div id="Canvas"></div>
+    <div class="controls" id="controls"></div>
   </div>
 
-  <div class="controls" id="controls"></div>
-
   <div class="info">
-    Déplacez le slider pour créer des sons • Cliquez sur Enregistrer pour capturer l'audio
+    Faites glissez la barre vertical pour chanter
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>

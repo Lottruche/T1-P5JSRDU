@@ -1,9 +1,225 @@
-/* html, body {
-  margin: 0;
-  padding: 0;
-}
+    body {
+        margin: 0;
+        background: linear-gradient(to bottom, transparent 10%, rgba(0, 0, 0, 10) 90%), url('https://i.pinimg.com/originals/a4/3d/7a/a43d7a0ae3515a31ddbe06991c338a48.gif') no-repeat center 150% fixed;
+        background-size: cover, cover;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-family: "Medula One", Arial, sans-serif;
+    }
 
-canvas {
-  display: block;
-} */
- 
+    .background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+    }
+
+    #Canvas {
+        border: solid #B99F65;
+        border-width: 2.5px 0.1px 2.5px 0.1px;
+        border-radius: 5px;
+        background-color: rgba(0, 0, 0, 0.45);
+    }
+
+    .container {
+        display: flex;
+        align-items: center;
+        padding-top: 350px;
+        gap: 10px;
+    }
+
+    .left-panel {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /*     #freqButtons {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    } */
+
+    #freqButtons {
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Style des boutons de fréquence */
+    #freqButtons button {
+        background-color: rgba(0, 0, 0, 0.45);
+        color: #424243;
+        font-family: "Medula One", Arial, sans-serif;
+        letter-spacing: 1.5px;
+        font-size: 25px;
+        border: solid;
+        border-color: #424243;
+        border-width: 0px 0px 0px 1.5px;
+        padding: 10px 20px;
+    }
+
+    #freqButtons button:hover {
+        color: #77777a;
+        border-color: #77777a;
+        cursor: pointer;
+        transition: 0.3s ease-in;
+    }
+
+    #freqButtons button.active {
+        color: #B99F65;
+        border-color: #B99F65;
+    }
+
+    input {
+        border: solid 0.5px #B99F65;
+        border-radius: 5px;
+        -webkit-appearance: slider-vertical;
+        height: 250px;
+        width: 50px;
+        accent-color: #B99F65;
+        cursor: grab;
+    }
+
+    .controls {
+        display: flex;
+        padding: 20px;
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .info {
+        color: #bdc3c7;
+        font-size: 16px;
+        letter-spacing: 1.5px;
+        text-align: center;
+    }
+
+    @font-face {
+        font-family: "Medula One";
+        src: url(https://fonts.gstatic.com/s/medulaone/v7/LoO8LDXpiOs8e6qJRLl2SQzyDMXhdD8sAj6OAJTFsBI.woff2);
+    }
+
+    .decorated-button {
+        color: #bdc3c7;
+        border: none;
+        outline: none;
+        display: block;
+        position: relative;
+        font-family: inherit;
+        text-decoration: none;
+        background-color: transparent;
+        transition: color 0.2s ease-in;
+    }
+
+    .decorated-button:hover {
+        color: #B99F65;
+        cursor: pointer;
+    }
+
+    .decorated-button:hover .left-decoration:before {
+        transform: translate(3px, 3px);
+    }
+
+    .decorated-button:hover .left-decoration:after {
+        transform: translate(3px, -3px) rotate(-90deg);
+    }
+
+    .decorated-button:hover .right-decoration:before {
+        transform: translate(-3px, 3px) rotate(90deg);
+    }
+
+    .decorated-button:hover .right-decoration:after {
+        transform: translate(-3px, -3px) rotate(180deg);
+    }
+
+    .decorated-button .button-text {
+        margin: 8px 3px;
+        display: block;
+        line-height: 1;
+        font-size: 24px;
+        text-align: center;
+        position: relative;
+        padding: 10px 15px;
+        letter-spacing: 1.5px;
+        background-color: rgba(0, 0, 0, 0.45);
+        border: solid 0.5px #B99F65;
+        border-radius: 5px;
+        transition: background-color 0.2s ease-in;
+    }
+
+    .decorated-button .left-decoration {
+        top: 0;
+        left: 0;
+        bottom: 0;
+        z-index: 1;
+        height: 100%;
+        display: block;
+        position: absolute;
+    }
+
+    .decorated-button .left-decoration:before {
+        top: 0;
+        left: 0;
+        content: '';
+        width: 27px;
+        height: 27px;
+        display: block;
+        position: absolute;
+        background: url(https://www.zelda.com/breath-of-the-wild/assets/img/decorations/decorated-button__decoration.svg);
+        transition: transform 0.2s ease-in;
+    }
+
+    .decorated-button .left-decoration:after {
+        left: 0;
+        bottom: 0;
+        content: '';
+        width: 27px;
+        height: 27px;
+        display: block;
+        position: absolute;
+        transform: rotate(-90deg);
+        background: url(https://www.zelda.com/breath-of-the-wild/assets/img/decorations/decorated-button__decoration.svg);
+        transition: transform 0.2s ease-in;
+    }
+
+    .decorated-button .right-decoration {
+        top: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1;
+        height: 100%;
+        display: block;
+        position: absolute;
+    }
+
+    .decorated-button .right-decoration:before {
+        top: 0;
+        right: 0;
+        content: '';
+        width: 27px;
+        height: 27px;
+        display: block;
+        position: absolute;
+        transform: rotate(90deg);
+        background: url(https://www.zelda.com/breath-of-the-wild/assets/img/decorations/decorated-button__decoration.svg);
+        transition: transform 0.2s ease-in;
+    }
+
+    .decorated-button .right-decoration:after {
+        right: 0;
+        bottom: 0;
+        content: '';
+        width: 27px;
+        height: 27px;
+        display: block;
+        position: absolute;
+        transform: rotate(180deg);
+        background: url(https://www.zelda.com/breath-of-the-wild/assets/img/decorations/decorated-button__decoration.svg);
+        transition: transform 0.2s ease-in;
+    }

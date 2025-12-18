@@ -1,200 +1,204 @@
-    // ==================== TRAÎNÉE ====================
-    let particles = [];
-    let centerY;
-    let speed = 4;
-    let isGrabbed = false;
-    let slider;
+// ==================== TRAÎNÉE ====================
+let particles = [];
+let centerY;
+let speed = 2;
+let isGrabbed = false;
+let slider;
 
-    // ==================== OSCILLATOR ====================
-    let osc, playing = false, freq;
-    let smoothFreq = 440;
+// ==================== OSCILLATOR ====================
+let osc, playing = false, freq;
+let smoothFreq = 440;
+let minFreq = 350, maxFreq = 550;
 
-    // ==================== RECORDER ====================
-    let recorder;
-    let soundFile;
-    let isRecording = false;
+// ==================== RECORDER ====================
+let recorder;
+let soundFile;
+let isRecording = false;
+let recordingTimeout;
 
-    // ==================== UI ELEMENTS ====================
-    let recordButton, playButton, downloadButton;
+// ==================== UI ELEMENTS ====================
+let recordButton, playButton, downloadButton, freq250Button, freq350Button, freq550Button;
 
-    function setup() {
-      let cnv = createCanvas(800, 300);
-      cnv.parent("Canvas");
-      noStroke();
+function setup() {
+    let cnv = createCanvas(600, 250);
+    cnv.parent("Canvas");
+    noStroke();
 
-      slider = select("#ySlider");
-      centerY = height / 2;
+    slider = select("#ySlider");
+    centerY = height / 4;
 
-      // Oscillateur audio
-      osc = new p5.Oscillator("sine");
-      osc.amp(0);
+    freq250Button = createButton('Grave');
+    freq250Button.parent('freqButtons');
+    freq250Button.mousePressed(() => { minFreq = 250; maxFreq = 450; });
 
-      // Créer le recorder - enregistre tout l'audio de la page
-      recorder = new p5.SoundRecorder();
-      recorder.setInput(); // Sans paramètre = capture tout l'audio
-      soundFile = new p5.SoundFile();
+    freq350Button = createButton('Medium');
+    freq350Button.parent('freqButtons');
+    freq350Button.mousePressed(() => { minFreq = 350; maxFreq = 550; });
 
-      // Créer les boutons avec p5.js
-      recordButton = createButton('🔴 Enregistrer');
-      recordButton.parent('controls');
-      recordButton.mousePressed(toggleRecording);
-      recordButton.style('padding', '12px 24px');
-      recordButton.style('font-size', '16px');
-      recordButton.style('border', 'none');
-      recordButton.style('border-radius', '5px');
-      recordButton.style('cursor', 'pointer');
-      recordButton.style('font-weight', 'bold');
-      recordButton.style('background', '#e74c3c');
-      recordButton.style('color', 'white');
-      recordButton.style('transition', 'all 0.3s');
+    freq550Button = createButton('Aigu');
+    freq550Button.parent('freqButtons');
+    freq550Button.mousePressed(() => { minFreq = 450; maxFreq = 650; });
 
-      playButton = createButton('▶️ Écouter');
-      playButton.parent('controls');
-      playButton.mousePressed(playRecording);
-      playButton.style('padding', '12px 24px');
-      playButton.style('font-size', '16px');
-      playButton.style('border', 'none');
-      playButton.style('border-radius', '5px');
-      playButton.style('cursor', 'pointer');
-      playButton.style('font-weight', 'bold');
-      playButton.style('background', '#3498db');
-      playButton.style('color', 'white');
-      playButton.style('transition', 'all 0.3s');
-      playButton.hide();
+    // Oscillateur audio
+    osc = new p5.Oscillator("sine");
+    osc.amp(0);
 
-      downloadButton = createButton('💾 Télécharger');
-      downloadButton.parent('controls');
-      downloadButton.mousePressed(downloadRecording);
-      downloadButton.style('padding', '12px 24px');
-      downloadButton.style('font-size', '16px');
-      downloadButton.style('border', 'none');
-      downloadButton.style('border-radius', '5px');
-      downloadButton.style('cursor', 'pointer');
-      downloadButton.style('font-weight', 'bold');
-      downloadButton.style('background', '#27ae60');
-      downloadButton.style('color', 'white');
-      downloadButton.style('transition', 'all 0.3s');
-      downloadButton.hide();
+    // Créer le recorder - enregistre tout l'audio de la page
+    recorder = new p5.SoundRecorder();
+    recorder.setInput(); // Sans paramètre = capture tout l'audio
+    soundFile = new p5.SoundFile();
 
-      // Événements slider
-      slider.mousePressed(() => {
+    // Créer les boutons avec p5.js
+    recordButton = createButton('');
+    recordButton.parent('controls');
+    recordButton.class('decorated-button');
+    recordButton.html('<span class="button-text"> S\'enregistrer</span><span class="left-decoration"></span><span class="right-decoration"></span>');
+    recordButton.mousePressed(toggleRecording);
+
+    playButton = createButton('');
+    playButton.parent('controls');
+    playButton.class('decorated-button');
+    playButton.html('<span class="button-text"> Écouter</span><span class="left-decoration"></span><span class="right-decoration"></span>');
+    playButton.mousePressed(playRecording);
+
+    downloadButton = createButton('');
+    downloadButton.parent('controls');
+    downloadButton.class('decorated-button');
+    downloadButton.html('<span class="button-text"> Télécharger</span><span class="left-decoration"></span><span class="right-decoration"></span>');
+    downloadButton.mousePressed(downloadRecording);
+
+    // Événements slider
+    slider.mousePressed(() => {
         isGrabbed = true;
         if (!playing) {
-          userStartAudio(); // S'assurer que l'audio est activé
-          osc.start();
-          playing = true;
+            userStartAudio(); // S'assurer que l'audio est activé
+            osc.start();
+            playing = true;
         }
-      });
+    });
 
-      slider.mouseReleased(() => {
+    slider.mouseReleased(() => {
         isGrabbed = false;
         osc.amp(0, 0.4);
         playing = false;
-      });
+    });
+}
+
+function draw() {
+
+    // ==================== NETTOYAGE CANVAS ====================
+    clear();
+    stroke(255,200, 120, 150);
+    strokeWeight(1);
+    line(0, height/3, width, height/3);
+    line(0, 2*height/3, width, 2*height/3);
+    noStroke();
+    centerY = map(slider.value(), 0, 260, 230, 0);
+    // ==================== SLIDER → FRÉQUENCE ====================
+    freq = map(centerY, 250, 0, minFreq, maxFreq);
+    smoothFreq = lerp(smoothFreq, freq, 0.05);
+    if (playing) {
+        osc.freq(smoothFreq, 0.1);
+        osc.amp(1, 0.1);
     }
 
-    function draw() {
-      background(0, 70);
-      centerY = map(slider.value(), 0, 300, 0, 300);
-
-      // ========== SLIDER → fréquence sonore ==========
-      freq = map(centerY, 300, 0, 350, 550);
-      smoothFreq = lerp(smoothFreq, freq, 0.05);
-
-      if (playing) {
-        osc.freq(smoothFreq, 0.1);
-        osc.amp(0.5, 0.1);
-      }
-
-      // ========== TRAÎNÉE SI SLIDER GRAB ==========
-      if (isGrabbed) {
+    // ==================== TRAÎNÉE SI SLIDER GRAB ====================
+    if (isGrabbed) {
         for (let i = 0; i < 5; i++) {
-          particles.push({
-            x: width / 2,
-            y: centerY,
-            alpha: 255,
-          });
+            particles.push({
+                x: width / 25,
+                y: centerY,
+                alpha: 500,
+            });
         }
-      }
+    }
 
-      for (let i = particles.length - 1; i >= 0; i--) {
+    // ==================== UPDATE PARTICULES ====================
+    for (let i = particles.length - 1; i >= 0; i--) {
         let p = particles[i];
         p.x += speed;
-        p.alpha -= 3;
-        fill(36, 122, 163, p.alpha);
+        p.alpha -= 1.8;
+
+        fill(52, 159, 207, p.alpha);
         circle(p.x, p.y, 20);
-        if (p.alpha <= 0) particles.splice(i, 1);
-      }
 
-      fill(52, 159, 207);
-      circle(width / 2, centerY, 20);
-
-      // Indicateur d'enregistrement visuel
-      if (isRecording) {
-        fill(231, 76, 60, 150 + 105 * sin(frameCount * 0.1));
-        noStroke();
-        circle(width - 30, 30, 20);
-        fill(255);
-        textSize(14);
-        textAlign(RIGHT, CENTER);
-        text('ENREGISTREMENT...', width - 45, 30);
-        textAlign(LEFT, BASELINE);
-      }
+        if (p.alpha <= 0) {
+            particles.splice(i, 0.1);
+        }
     }
-
-    function toggleRecording() {
-      if (!isRecording) {
+}
+function toggleRecording() {
+    if (!isRecording) {
         // Démarrer l'enregistrement
         userStartAudio(); // S'assurer que l'audio est activé
         recorder.record(soundFile);
         isRecording = true;
-        recordButton.html('⏹️ Arrêter');
-        recordButton.style('background', '#27ae60');
+        recordButton.html('<span class="button-text">Arrêter</span><span class="left-decoration"></span><span class="right-decoration"></span>');
+        recordingTimeout = setTimeout(() => {
+            recorder.stop();
+            isRecording = false;
+            recordButton.html('<span class="button-text">Enregistrer</span><span class="left-decoration"></span><span class="right-decoration"></span>');
+            playButton.show();
+            downloadButton.show();
+            console.log('Enregistrement arrêté automatiquement après 1:30');
+        }, 90000);
         console.log('Enregistrement démarré');
-      } else {
+    } else {
         // Arrêter l'enregistrement
+        clearTimeout(recordingTimeout);
         recorder.stop();
         isRecording = false;
-        recordButton.html('🔴 Enregistrer');
-        recordButton.style('background', '#e74c3c');
+        recordButton.html('<span class="button-text">Enregistrer</span><span class="left-decoration"></span><span class="right-decoration"></span>');
 
         // Afficher les boutons de lecture et téléchargement
         playButton.show();
         downloadButton.show();
         console.log('Enregistrement arrêté');
-      }
     }
+}
 
-    function playRecording() {
-      if (soundFile && soundFile.buffer) {
+function playRecording() {
+    if (soundFile && soundFile.buffer) {
         if (soundFile.isPlaying()) {
-          soundFile.stop();
-          playButton.html('▶️ Écouter');
+            soundFile.stop();
+            playButton.html('<span class="button-text">Écouter</span><span class="left-decoration"></span><span class="right-decoration"></span>');
         } else {
-          soundFile.play();
-          playButton.html('⏸️ Pause');
+            soundFile.play();
+            playButton.html('<span class="button-text">Pause</span><span class="left-decoration"></span><span class="right-decoration"></span>');
 
-          // Remettre le bouton à "Écouter" quand la lecture est terminée
-          soundFile.onended(() => {
-            playButton.html('▶️ Écouter');
-          });
+            // Remettre le bouton à "Écouter" quand la lecture est terminée
+            soundFile.onended(() => {
+                playButton.html('<span class="button-text">Écouter</span><span class="left-decoration"></span><span class="right-decoration"></span>');
+            });
         }
-      }
     }
+}
 
-    function downloadRecording() {
-      if (soundFile.buffer) {
-        saveSound(soundFile,'hello.mp3')
+function downloadRecording() {
+    if (soundFile && soundFile.buffer) {
         // Créer un nom de fichier avec horodatage
-  /*       let timestamp = year() + "-" +
-          nf(month(), 2) + "-" +
-          nf(day(), 2) + "_" +
-          nf(hour(), 2) + "-" +
-          nf(minute(), 2) + "-" +
-          nf(second(), 2);
-        let filename = "recording_" + timestamp + ".wav"; */
-/* 
+        let timestamp = year() + "-" +
+            nf(month(), 2) + "-" +
+            nf(day(), 2) + "_" +
+            nf(hour(), 2) + "-" +
+            nf(minute(), 2) + "-" +
+            nf(second(), 2);
+        let filename = "recording_" + timestamp + ".wav";
+
         saveSound(soundFile, filename);
-        console.log('Téléchargement:', filename); */
-      }
+        console.log('Téléchargement:', filename);
     }
+}
+
+const freqButtons = document.getElementById("freqButtons");
+
+freqButtons.addEventListener("click", (e) => {
+  if (e.target.tagName !== "BUTTON") return;
+
+  // Retire l'état actif de tous les boutons
+  const buttons = freqButtons.querySelectorAll("button");
+  buttons.forEach(btn => btn.classList.remove("active"));
+
+  // Active le bouton cliqué
+  e.target.classList.add("active");
+});
