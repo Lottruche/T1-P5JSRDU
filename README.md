@@ -1,12 +1,12 @@
 # T1 Créative Coding - WebTool
 ## ****Chant du loup****
-### **Concept :** Reproduire un mini jeu du jeu vidéo "The Legends of Zelda : Twilight Princesse" dans lequel deux loups chante
+### **Concept :** Synthétiseur sonore inspiré d'un mini jeu du jeu vidéo "The Legends of Zelda : Twilight Princesse"
 [![Image_TLOZTP](https://zeldauniverse.net/wp-content/uploads/2022/01/TP_Howl_Stone-886x509.png)](https://youtu.be/EVsgu4Q-e1g)
 
 ---
 ### **Utilisation :**
-Comme fonction principal, on peut déplacer un curseur qui changera la fréquence d'un oscilateur pour créer son propore chant à télécharger.  
-En fonction secondaire, il est possible d'ajouter des sons dans une timeline qui boucle pour accompagner le chant.
+L'utilisateur peut déplacer un curseur qui changera la fréquence d'un oscilateur pour créer son propore son.
+Il peut aussi lancer un enregistrement avant de faire son son, l'utilisateur pourras par la suite le ré-écouter et le télécharger si il le souhaite.  
 ### **Snippets :**
 #### **Fonctionnalités**
 - Synthétiseur sonnor
@@ -117,60 +117,7 @@ function setup() {
      });
    }
 ~~~
-- <u>Sons personnalisés 2 :</u> [p5.SoundFile](https://p5js.org/reference/p5.sound/p5.SoundFile)
-~~~
-let mySound;
-function preload() {
-  soundFormats('mp3', 'ogg');
-  mySound = loadSound('/assets/doorbell');
-}
 
-function setup() {
-  let cnv = createCanvas(100, 100);
-  cnv.mousePressed(canvasPressed);
-  background(220);
-  text('tap here to play', 10, 20);
-}
-
-function canvasPressed() {
-  mySound.play();
-}
-~~~
-- <u>Loop :</u> [p5.SoundLoop](https://p5js.org/reference/p5.sound/p5.SoundLoop)
-~~~
-let synth, soundLoop;
- let notePattern = [60, 62, 64, 67, 69, 72];
-
- function setup() {
-   let cnv = createCanvas(100, 100);
-   cnv.mousePressed(canvasPressed);
-   colorMode(HSB);
-   background(0, 0, 86);
-   text('tap to start/stop', 10, 20);
-
-   let intervalInSeconds = 0.2;
-   soundLoop = new p5.SoundLoop(onSoundLoop, intervalInSeconds);
-
-   synth = new p5.MonoSynth();
-}
-
-function canvasPressed() {
-  userStartAudio();
-
-  if (soundLoop.isPlaying) {
-    soundLoop.stop();
-  } else {
-    soundLoop.start();
-  }
-}
-
-function onSoundLoop(timeFromNow) {
-  let noteIndex = (soundLoop.iterations - 1) % notePattern.length;
-  let note = midiToFreq(notePattern[noteIndex]);
-  synth.play(note, 0.5, timeFromNow);
-  background(noteIndex * 360 / notePattern.length, 50, 100);
-}
-~~~
 - <u>(Visuel) écho :</u> [Smoke Particles](https://p5js.org/examples/math-and-physics-smoke-particle-system)
 ~~~
 let particleTexture;
